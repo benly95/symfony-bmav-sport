@@ -1,0 +1,61 @@
+version: '3.5'
+
+services:
+
+  web:
+    build:
+      context: .
+      dockerfile: .deploy/sedona/web/Dockerfile
+    networks:
+      default: ~
+      public: ~
+    labels:
+      traefik.enable: true
+      traefik.frontend.rule: "Host: $PROJECT_HOSTNAME"
+      traefik.frontend.entryPoints: http,https
+      traefik.docker.network: "$PUBLIC_NETWORK"
+    environment:
+      - ACCESS_CONTROLE_ORIGIN
+    volumes:
+      - ./:/var/www/html/
+      - ./.deploy/sedona/web/:/usr/local/apache2/conf.d/
+
+  app:
+    image: registry.sedona.fr/images/php:8-fpm
+    networks:
+      - default
+      - public
+    environment:
+      - COMPOSER_HOME=$COMPOSER_CONTAINER_HOME
+      - PROJECT_HOSTNAME
+      - PROJECT_SCHEME
+      - PROJECT_BASEPATH
+      - PROJECT_ENVIRONMENT
+      - MYSQL_HOST
+      - MYSQL_PORT
+      - JWT_PASSPHRASE
+    volumes:
+      - ./:/var/www/html/
+      - "$COMPOSER_LOCAL_HOME:$COMPOSER_CONTAINER_HOME"
+      - ./.deploy/sedona/app:/docker-entrypoint-init.d
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "13306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
+      - MYSQL_PORT
+      - MYSQL_DATABASE
+    volumes:
+      - ./.deploy/sedona/db/:/docker-entrypoint-initdb.d/
+      - db:/var/lib/mysql
+      - ./.deploy/sedona/db/my.cnf:/etc/mysql/my.cnf
+
+networks:
+  public:
+    external: true
+    name: "$PUBLIC_NETWORK"
+
+volumes:
+  db:
