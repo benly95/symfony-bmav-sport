@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Hello Produit! {% endblock %}
+
+{% block body %}
+	
+    Page produit
+	
+    {{ produit.nom }}
+	<p>{{ produit.description }}</p>
+    <img src="{{ produit.image }}">
+	
+
+<form action="{{ path('ajout_Panier') }}" method=post >
+
+<p>
+        <input id="id produit" name="produit" type="text" /><br />
+        
+    </p>
+<p>
+        <input id="id quantite" name="quantite" type="text" /><br />
+        <label for="id quantite"> :</label>
+    </p>
+<p>
+        <input id="année" name="année" type="text" />
+    </p>
+</form>
+
+{% endblock %}

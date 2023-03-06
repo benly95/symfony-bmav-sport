@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Categorie;
 use App\Entity\CategorieProduit;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,6 +20,16 @@ class CategorieProduitRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, CategorieProduit::class);
+    }
+
+    public function findWithProductForCategorie(Categorie $categorie) 
+    {
+        return $this->createQueryBuilder('c')
+            ->innerJoin("c.produits", "p")
+            ->andWhere("p.Categorie = :categorie OR p.Categorie IS NULL")
+            ->setParameter("categorie", $categorie)
+            ->getQuery()
+            ->getResult();
     }
 
     public function save(CategorieProduit $entity, bool $flush = false): void

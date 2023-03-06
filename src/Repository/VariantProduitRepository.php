@@ -39,6 +39,14 @@ class VariantProduitRepository extends ServiceEntityRepository
         }
     }
 
+    public function findBenny() 
+    {
+        return $this->createQueryBuilder('v')
+            ->setMaxResults(10)
+           ->getQuery()
+           ->getResult();
+    }
+
 //    /**
 //     * @return VariantProduit[] Returns an array of VariantProduit objects
 //     */

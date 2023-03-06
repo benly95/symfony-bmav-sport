@@ -15,10 +15,10 @@ class Produit
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'produits')]
@@ -29,12 +29,16 @@ class Produit
     #[ORM\JoinColumn(nullable: true)]
     private ?Categorie $Categorie = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
+
     #[ORM\ManyToOne(inversedBy: 'produits')]
     #[ORM\JoinColumn(nullable: true)]
-    private ?categorieProduit $categorieProduit = null;
+    private ?CategorieProduit $categorieProduit = null;
 
     #[ORM\OneToMany(mappedBy: 'Produit', targetEntity: VariantProduit::class)]
     private Collection $variantProduits;
+
 
     public function __construct()
     {
@@ -70,6 +74,7 @@ class Produit
         return $this;
     }
 
+
     public function getMarque(): ?Marque
     {
         return $this->Marque;
@@ -94,12 +99,12 @@ class Produit
         return $this;
     }
 
-    public function getCategorieProduit(): ?categorieProduit
+    public function getCategorieProduit(): ?CategorieProduit
     {
         return $this->categorieProduit;
     }
 
-    public function setCategorieProduit(?categorieProduit $categorieProduit): self
+    public function setCategorieProduit(?CategorieProduit $categorieProduit): self
     {
         $this->categorieProduit = $categorieProduit;
 
@@ -135,4 +140,17 @@ class Produit
 
         return $this;
     }
+
+    public function getImage() :?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image) :self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
 }

@@ -13,17 +13,14 @@ class VariantProduit
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $taille = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $couleur = null;
 
     #[ORM\Column(length: 255)]
     private ?string $prix = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $image = null;
 
     #[ORM\ManyToOne(inversedBy: 'variantProduits')]
     #[ORM\JoinColumn(nullable: false)]
@@ -66,18 +63,6 @@ class VariantProduit
     public function setPrix(string $prix): self
     {
         $this->prix = $prix;
-
-        return $this;
-    }
-
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
-
-    public function setImage(string $image): self
-    {
-        $this->image = $image;
 
         return $this;
     }

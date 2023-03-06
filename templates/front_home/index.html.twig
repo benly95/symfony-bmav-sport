@@ -10,11 +10,21 @@
 
 <div class="example-wrapper">
     <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
+    <h2> liste des categories </h2>
     <ul>
-        <li>Your controller at <code><a href="{{ 'C:/xampp/htdocs/bmavsport/symfony-bmavsport/src/Controller/FrontHomeController.php'|file_link(0) }}">src/Controller/FrontHomeController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/xampp/htdocs/bmavsport/symfony-bmavsport/templates/front_home/index.html.twig'|file_link(0) }}">templates/front_home/index.html.twig</a></code></li>
+	{% for categorie in categories %}
+        <li><a href="{{ path('app_categorie',{'id': categorie.id  }) }}">lien vers {{ categorie.nom }} </a> </li>
+    {% endfor %}
+    </ul> 
+
+    <h2> liste des marques </h2>
+    <ul>
+	{% for aa in marques %}
+        <li><a href="{{ path('app_marque',{'id': aa.id  }) }}">lien vers {{ aa.nom }} </a> </li>
+    {% endfor %}
     </ul>
 </div>
+
+
 {% endblock %}
+
