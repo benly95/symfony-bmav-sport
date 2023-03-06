@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Hello Marque!
+{% endblock %}
+
+{% block body %}
+
+	<h1>Page marque
+		{{ marque.nom }}
+	</h1>
+
+	{% if marque.imageLogo %}
+		<img src="{{ marque.imageLogo }}" alt="{{ marque.nom }}"/>
+	{% endif %}
+
+
+	<h2>Liste des liens vers les pages produits</h2>
+	<ul>
+		{% for i in marque.produits %}
+			<li>
+				<a href="{{ path('app_produit' , {'id': i.id }) }}">lien vers{{ i.nom}}</a>
+			</li>
+		{% endfor %}
+	</ul>
+
+
+{% endblock %}
