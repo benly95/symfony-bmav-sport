@@ -3,6 +3,7 @@ version: '3.5'
 services:
 
   web:
+    restart: always
     build:
       context: .
       dockerfile: .deploy/sedona/web/Dockerfile
@@ -21,6 +22,7 @@ services:
       - ./.deploy/sedona/web/:/usr/local/apache2/conf.d/
 
   app:
+    restart: always
     image: registry.sedona.fr/images/php:8-fpm
     networks:
       - default
@@ -40,7 +42,11 @@ services:
       - ./.deploy/sedona/app:/docker-entrypoint-init.d
 
   db:
+    restart: always
     image: mysql:8.0
+    networks:
+      - default
+      - public
     ports:
       - "13306:3306"
     environment:

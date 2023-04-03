@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\AdresseRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AdresseRepository::class)]
 class Adresse
@@ -14,15 +15,19 @@ class Adresse
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank, Assert\Length(max: 255)]
     private ?string $rue = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
     private ?int $codePostal = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank, Assert\Length(max: 255)]
     private ?string $ville = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank, Assert\Length(max: 255)]
     private ?string $pays = null;
 
     #[ORM\ManyToOne(inversedBy: 'adresseDeLivraisons')]
@@ -91,6 +96,15 @@ class Adresse
     {
         $this->client = $client;
 
+        return $this;
+    }
+
+    public function duplicate(Adresse $adresse) :self
+    {
+        $this->rue = $adresse->getRue();
+        $this->codePostal = $adresse->getCodePostal();
+        $this->ville = $adresse->getVille();
+        $this->pays = $adresse->getPays();
         return $this;
     }
 

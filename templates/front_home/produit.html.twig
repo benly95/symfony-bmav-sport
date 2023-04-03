@@ -4,26 +4,123 @@
 
 {% block body %}
 	
-    Page produit
-	
-    {{ produit.nom }}
-	<p>{{ produit.description }}</p>
-    <img src="{{ produit.image }}">
-	
+    <h1>{{ produit.nom }}</h1>
 
-<form action="{{ path('ajout_Panier') }}" method=post >
+    {% if path('app_categorieProduit', {'id': produit.categorieproduit.id, 'categorie_id': produit.categorie.id  }) in app.request.headers.get('referer') %}
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_categorie', {'id': produit.categorie.id }) }}">{{ produit.categorie.nom }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_categorieProduit', {'id': produit.categorieproduit.id, 'categorie_id': produit.categorie.id  }) }}">{{ produit.categorieproduit.nom }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ produit.nom }}</li>
+            </ol>
+        </nav>
+    {% endif %}
+    {% if path('app_marque', {'id': produit.marque.id }) in app.request.headers.get('referer') %}
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_marque', {'id': produit.marque.id }) }}">{{ produit.marque.nom }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ produit.nom }}</li>
+            </ol>
+        </nav>
+    {% endif %}
 
-<p>
-        <input id="id produit" name="produit" type="text" /><br />
-        
-    </p>
-<p>
-        <input id="id quantite" name="quantite" type="text" /><br />
-        <label for="id quantite"> :</label>
-    </p>
-<p>
-        <input id="année" name="année" type="text" />
-    </p>
-</form>
+    <div class="row">
+        <div class="col-9">
+            <img src="{{ produit.image }}" class="img-fluid rounded" style="">
+        </div>
+        <div class="col-3">
+            <h2>{{ produit.nom }}</h2>
+            <p>{{ produit.description }}</p>
+            {% if produit.hasManyVariantProduits %}
+            <p> A partir de {{ (produit.getMinPrice/100)|format_currency('EUR') }}</p>
+            {% endif %}
+            <table class="table table-light table-bordered">
+                <tbody>
+                    <tr>
+                        <td>Marque : </td>
+                        <td><a href="{{ path('app_marque', {'id': produit.Marque.id }) }}">{{ produit.Marque.nom }}</a></td>
+                    </tr>
+                    <tr>
+                        <td>Catégorie : </td>
+                        <td><a href="{{ path('app_categorie', {'id': produit.categorie.id }) }}">{{ produit.categorie.nom }}</a></td>
+                    </tr>
+                    <tr>
+                        <td>Type : </td>
+                        <td><a href="{{ path('app_categorieProduit', {'id': produit.categorieproduit.id, 'categorie_id': produit.categorie.id  }) }}">{{ produit.categorieproduit.nom }}</a></td>
+                    </tr>
+                    {% if produit.hasTaille %}
+                    <tr>
+                        <td>Disponible en : </td>
+                        <td>{{ produit.getTailles|join(' ,') }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if produit.hasCouleur %}
+                        <tr>
+                            <td>Disponible en : </td>
+                            <td>{{ produit.getCouleurs|join(' ,') }}</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            <form action="{{ path('ajout_panier') }}"  >
+                {% if produit.hasManyVariantProduits %}
+                    <div class="mb-3 input-group">
+                        {% if produit.hasTaille and not produit.hasCouleur %}
+                            <span class="input-group-text" id="basic-addon1">Taille :</span>
+                        {% endif %}
+                        {% if produit.hasCouleur and not produit.hasTaille %}
+                            <span class="input-group-text" id="basic-addon1">Couleur : </span>
+                        {% endif %}
+
+                        <select id="id" name="id" class="form-select" onChange="updatePrice()">
+                            {% for variantProduits in produit.variantProduits %}
+                                <option data-price="{{ (variantProduits.prix/100)|format_currency('EUR') }}" value="{{ variantProduits.id }}">{{ variantProduits }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% else %}
+                    <input id="id" name="id" type="hidden" data-price="{{ (produit.fistVariantProduit.prix/100)|format_currency('EUR') }}" value="{{ produit.fistVariantProduit.id }}"/>
+                {% endif %}
+                <h3 class="mb-3 text-center" >
+                    Prix : <span id="price"></span>
+                </h3>
+                <div class="mb-3 text-center input-group">
+                    <button class="btn btn-secondary" onclick="changeQt(-1)" type="button" >-</button>
+                    <input type="number" id="qt" class="form-control" onchange="updatePrice()" name="qt" value="1" min="1"/>
+                    <button class="btn btn-secondary" onclick="changeQt(+1)"  type="button" >+</button>
+                </div>
+                <div class="mb-3 d-grid gap-2">
+                    <input class="btn btn-primary" type="submit" value="ajouter au panier"/>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function changeQt(qt) {
+            var el = document.getElementById('qt'),
+                value = parseInt(el.value);
+
+            if (qt == -1 && value == 1) {
+                return;
+            }
+            el.value = value + qt;
+        }
+
+        function updatePrice() {
+            var priceUnitEl = document.getElementById('id');
+            if (priceUnitEl.selectedOptions) {
+                priceUnit = priceUnitEl.selectedOptions.item(0).attributes['data-price'].nodeValue;
+            } else {
+                priceUnit = priceUnitEl.attributes['data-price'].nodeValue;
+            }
+            document.getElementById('price').innerHTML = priceUnit;
+
+        }
+        updatePrice();
+
+    </script>
 
 {% endblock %}

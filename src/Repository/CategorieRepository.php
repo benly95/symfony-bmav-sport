@@ -39,6 +39,14 @@ class CategorieRepository extends ServiceEntityRepository
         }
     }
 
+    public function findAllWithProduct() :mixed
+    {
+        return $this->createQueryBuilder('c')
+            ->innerJoin('c.Produits', 'p')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Categorie[] Returns an array of Categorie objects
 //     */

@@ -39,6 +39,14 @@ class MarqueRepository extends ServiceEntityRepository
         }
     }
 
+    public function findAllWithProduct() : mixed
+    {
+        return $this->createQueryBuilder('m')
+            ->innerJoin('m.produits','p')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Marque[] Returns an array of Marque objects
 //     */

@@ -34,18 +34,22 @@ class Panier
     #[ORM\OneToOne(mappedBy: 'panier', cascade: ['persist', 'remove'])]
     private ?Livraison $livraison = null;
 
+    #[ORM\OneToOne(mappedBy: 'panier', cascade: ['persist', 'remove'])]
+    private ?Paiement $paiement = null;
+
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Adresse $adresseDeFacture = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paniers')]
+    #[ORM\ManyToOne(inversedBy: 'paniers', cascade: ['persist'])]
     private ?Client $client = null;
 
-    #[ORM\OneToMany(mappedBy: 'panier', targetEntity: PanierItem::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'panier', targetEntity: PanierItem::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $panierItems;
 
     public function __construct()
     {
+        // recupere la variable
         $this->panierItems = new ArrayCollection();
     }
 
@@ -70,6 +74,10 @@ class Panier
     {
         return $this->total;
     }
+    public function getTotalHT(): ?int
+    {
+        return $this->total*0.8;
+    }
 
     public function setTotal(int $total): self
     {
@@ -86,6 +94,9 @@ class Panier
     public function setStatus(string $status): self
     {
         $this->status = $status;
+        if ($status === self::STATUS_PAYER) {
+            $this->dateDeCommande = new \DateTime();
+        }
 
         return $this;
     }
@@ -104,6 +115,14 @@ class Panier
 
         $this->livraison = $livraison;
 
+        return $this;
+    }
+
+    public function createLivraison() :self
+    {
+        $livraison = new Livraison();
+
+        $this->setLivraison($livraison);
         return $this;
     }
 
@@ -139,11 +158,22 @@ class Panier
         return $this->panierItems;
     }
 
+    public function calculetteTotal() :void
+    {
+        $total = 0;
+        /** @var PanierItem $panierItem */
+        foreach ($this->panierItems as $panierItem) {
+            $total = $total + $panierItem->getTotal();
+        }
+        $this->total = $total;
+    }
+
+
     public function addPanierItem(PanierItem $panierItem): self
     {
         if (!$this->panierItems->contains($panierItem)) {
             $this->panierItems->add($panierItem);
-            $panierItem->setPanier($this);
+            $this->calculetteTotal();
         }
 
         return $this;
@@ -154,11 +184,25 @@ class Panier
         if ($this->panierItems->removeElement($panierItem)) {
             // set the owning side to null (unless already changed)
             if ($panierItem->getPanier() === $this) {
-                $panierItem->setPanier(null);
+                $this->calculetteTotal();
             }
         }
 
         return $this;
     }
+
+    public function getPaiement(): ?Paiement
+    {
+        return $this->paiement;
+    }
+
+    public function setPaiement(Paiement $paiement): self
+    {
+        $paiement->setPanier($this);
+        $this->paiement = $paiement;
+        return  $this;
+    }
+
+
 }
 ?>

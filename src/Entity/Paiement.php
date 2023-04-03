@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\PaiementRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PaiementRepository::class)]
 class Paiement
@@ -30,9 +31,11 @@ class Paiement
     private ?int $total = 0;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank, Assert\Length(max: 255)]
     private ?string $moyen = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\OneToOne(inversedBy: 'paiement', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Panier $panier = null;
 
     public function getId(): ?int
@@ -48,6 +51,9 @@ class Paiement
     public function setStatus(string $status): self
     {
         $this->status = $status;
+        if ($status == self::STATUS_VALIDER) {
+            $this->date = new \DateTime();
+        }
 
         return $this;
     }

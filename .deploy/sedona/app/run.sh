@@ -6,7 +6,7 @@ echo "\033[30;48;5;82m > Wait to MySQL ready -----------------------------------
 #wait-for-it $MYSQL_HOST:$MYSQL_PORT -s -t 500 -- echo "        >  MySQL is ready"
 
 echo "\033[30;48;5;82m > Install project -------------------------------------------------------- \033[0m"; \
-composer install
+#composer install
 #make install
 echo "\033[30;48;5;82m > Install project done -------------------------------------------------------- \033[0m"; \
 

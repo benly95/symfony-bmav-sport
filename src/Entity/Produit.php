@@ -111,6 +111,16 @@ class Produit
         return $this;
     }
 
+    public function hasManyVariantProduits() :bool
+    {
+        return $this->variantProduits->count() > 1;
+    }
+
+    public function getFistVariantProduit() :VariantProduit
+    {
+        return $this->variantProduits->first();
+    }
+
     /**
      * @return Collection<int, VariantProduit>
      */
@@ -151,6 +161,52 @@ class Produit
         $this->image = $image;
 
         return $this;
+    }
+
+    public function getMinPrice() :?int
+    {
+        $min = null;
+        foreach ($this->variantProduits as $variantProduits) {
+            /** @var VariantProduit $variantProduits */
+            if ($variantProduits->getPrix() < $min || $min === null ) {
+                $min = $variantProduits->getPrix();
+            }
+        }
+        return $min;
+    }
+
+    public function getTailles() : array
+    {
+        $list = [];
+        foreach ($this->variantProduits as $variantProduits) {
+            /** @var VariantProduit $variantProduits */
+            if (!empty($variantProduits->getTaille())) {
+                $list[] = $variantProduits->getTaille();
+            }
+        }
+        return array_unique($list);
+    }
+
+    public function hasTaille() : bool
+    {
+        return count($this->getTailles()) > 0;
+    }
+
+    public function getCouleurs() : array
+    {
+        $list = [];
+        foreach ($this->variantProduits as $variantProduits) {
+            /** @var VariantProduit $variantProduits */
+            if (!empty($variantProduits->getCouleur())) {
+                $list[] = $variantProduits->getCouleur();
+            }
+        }
+        return array_unique($list);
+    }
+
+    public function hasCouleur() : bool
+    {
+        return count($this->getCouleurs()) > 0;
     }
 
 }

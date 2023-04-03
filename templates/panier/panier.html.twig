@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Hello Panier!{% endblock %}
+
+{% block body %}
+
+    {% if panier %}
+        <div class="rounded border bg-light">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <!-- <th>data</th>
+                        <th>data Produit</th> -->
+                        <th scope="col"></th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Marque</th>
+                        <th scope="col"  class="text-center">Prix Unitaire</th>
+                        <th scope="col">Quantite</th>
+                        <th scope="col"  class="text-center">Prix Total</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tfoot class="fw-bold">
+                    <tr>
+                        <td colspan="6" class="text-end">Total HT</td>
+                        <td class="text-end">{{ (panier.totalHT/100)|format_currency('EUR') }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" class="text-end">Total TTC</td>
+                        <td class="text-end">{{ (panier.total/100)|format_currency('EUR') }}</td>
+                    </tr>
+                </tfoot>
+                <tbody>
+                {% for panierItem in panier.panierItems %}
+                    <tr>
+                        <td class="text-center"><a href="{{ path('app_produit', {'id': panierItem.produit.id }) }}"><img src="{{ panierItem.produit.image }}" height="100px"></a></td>
+                        <td>
+                            <a href="{{ path('app_produit', {'id': panierItem.produit.id }) }}">
+                                {{ panierItem.produit.nom }}
+                                {% if panierItem.variantProduit.taille %}<br/>en taille {{ panierItem.variantProduit.taille }} {% endif %}
+                                {% if panierItem.variantProduit.couleur %}<br/>couleur {{ panierItem.variantProduit.couleur }} {% endif %}
+                            </a>
+                        </td>
+                        <td><a href="{{ path('app_marque', {'id': panierItem.produit.Marque.id }) }}">{{ panierItem.produit.Marque.nom }}</a></td>
+                        <td class="text-center">{{ (panierItem.prixUnitaire/100)|format_currency('EUR') }}</td>
+                        <td>
+                            <div class="input-group ">
+                                <a {% if panierItem.quantite > 1 %}href="{{  path('reduire_quantite', {'id': panierItem.id }) }}" class="btn btn-secondary"
+                                        {% else %} class="btn btn-secondary disabled" {% endif %} >-</a>
+                                <input type="text" style="width:80px" class="form-control text-center" readonly="readonly" value="{{ panierItem.quantite }}">
+                                <a class="btn btn-secondary" href="{{  path('ajout_quantite', {'id': panierItem.id }) }}">+</a>
+                            </div>
+                        </td>
+                        <td class="text-center">{{ (panierItem.total/100)|format_currency('EUR') }}</td>
+                        <td class="text-end">
+                            <a class="btn btn-danger" href="{{ path('panier_item_suppersion',  {'id' : panierItem.id  }) }}"><i class="bi bi-trash3"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="text-center">
+            <a href="{{ path('tunnel-achat-coordonnee') }}" class="btn btn-lg btn-primary">Etape suivante</a>
+        </div>
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+            Votre panier est actullement vide !
+        </div>
+    {% endif %}
+
+{% endblock %}

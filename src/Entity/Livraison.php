@@ -4,22 +4,27 @@ namespace App\Entity;
 
 use App\Repository\LivraisonRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LivraisonRepository::class)]
 class Livraison
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank, Assert\Length(max: 255)]
     private ?string $transporteur = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank, Assert\Length(max: 255)]
     private ?string $modeDeLivraison = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $informationLivraison = null;
 
     #[ORM\OneToOne(inversedBy: 'livraison', cascade: ['persist', 'remove'])]
@@ -28,7 +33,15 @@ class Livraison
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank, Assert\Valid]
     private ?Adresse $adresse = null;
+
+    public function __construct(?Adresse $copieAdresse = null)
+    {
+        if ($copieAdresse instanceof Adresse) {
+            $this->adresse = (new Adresse())->duplicate($copieAdresse);
+        }
+    }
 
     public function getId(): ?int
     {

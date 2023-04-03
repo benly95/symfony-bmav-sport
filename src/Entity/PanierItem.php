@@ -14,18 +14,25 @@ class PanierItem
     private ?int $id = null;
 
     #[ORM\Column(options:[ "default"=> 1])]
-    private int $quantite = 1;
+    private int $quantite = 0;
 
     #[ORM\Column(options:[ "default"=> 0])]
     private int $prixUnitaire = 0;
 
-    #[ORM\ManyToOne(inversedBy: 'panierItems')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Panier $panier = null;
 
-    #[ORM\ManyToOne()]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Produit $produit = null;
+    public function __construct(
+        #[ORM\ManyToOne()]
+        #[ORM\JoinColumn(nullable: false)]
+        private VariantProduit $variantProduit,
+        #[ORM\ManyToOne(inversedBy: 'panierItems')]
+        #[ORM\JoinColumn(nullable: false)]
+        private Panier $panier
+    )
+    {
+        $this->panier->addPanierItem($this);
+        $this->quantite = 0;
+        $this->prixUnitaire = $this->variantProduit->getPrix();
+    }
 
     public function getId(): ?int
     {
@@ -40,6 +47,19 @@ class PanierItem
     public function setQuantite(int $quantite): self
     {
         $this->quantite = $quantite;
+        if ($this->panier instanceof Panier) {
+            $this->panier->calculetteTotal();
+        }
+
+        return $this;
+    }
+
+    public function addQuantite(int $quantite): self
+    {
+        $this->quantite += $quantite;
+        if ($this->panier instanceof Panier) {
+            $this->panier->calculetteTotal();
+        }
 
         return $this;
     }
@@ -50,34 +70,28 @@ class PanierItem
         return $this->prixUnitaire;
     }
 
-    public function setPrixUnitaire(int $prixUnitaire): self
-    {
-        $this->prixUnitaire = $prixUnitaire;
-
-        return $this;
-    }
-
     public function getPanier() : Panier
     {
         return $this->panier;
     }
 
-    public function setPanier(?Panier $panier): self
+    public function getVariantProduit(): VariantProduit
     {
-        $this->panier = $panier;
-
-        return $this;
+        return $this->variantProduit;
     }
 
-    public function getProduit(): ?Produit
+    public function getProduit(): Produit
     {
-        return $this->produit;
+        return $this->variantProduit->getProduit();
     }
 
-    public function setProduit(?Produit $produit): self
+    public function getMarque(): Marque
     {
-        $this->produit = $produit;
+        return $this->variantProduit->getProduit()->getMarque();
+    }
 
-        return $this;
+    public function getTotal() :int
+    {
+        return  $this->getQuantite() * $this->getPrixUnitaire();
     }
 }

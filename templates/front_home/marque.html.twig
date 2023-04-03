@@ -6,23 +6,20 @@
 
 {% block body %}
 
-	<h1>Page marque
-		{{ marque.nom }}
-	</h1>
-
-	{% if marque.imageLogo %}
-		<img src="{{ marque.imageLogo }}" alt="{{ marque.nom }}"/>
-	{% endif %}
-
-
-	<h2>Liste des liens vers les pages produits</h2>
-	<ul>
-		{% for i in marque.produits %}
-			<li>
-				<a href="{{ path('app_produit' , {'id': i.id }) }}">lien vers{{ i.nom}}</a>
-			</li>
-		{% endfor %}
-	</ul>
+	<div>
+		{% if marque.imageLogo %}
+			<img src="{{ marque.imageLogo }}" style="max-height: 200px" class="float-end img-thumbnail" alt="{{ marque.nom }}"/>
+		{% endif %}
+		<h1>{{ marque.nom }}</h1>
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item"><a href="/">Home</a></li>
+				<li class="breadcrumb-item active" aria-current="page">{{ marque.nom }}</li>
+			</ol>
+		</nav>
+	</div>
 
 
+	<h2 class="clearfix">Tous mes prduits de la marque {{ marque.nom }} :</h2>
+	{% include 'front_home/_productList.html.twig' with {'produits' : marque.produits } %}
 {% endblock %}

@@ -3,20 +3,20 @@
 {% block title %}Hello Categorie!{% endblock %}
 
 {% block body %}
-  Page Categorie {{ categorie.nom }}
-<p>{{ categorie.description }}</p>
+    <h1>Section {{ categorie.nom }}</h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ categorie.nom }}</li>
+        </ol>
+    </nav>
+    <p>{{ categorie.description }}</p>
 
   <ul>
-{{ dump(categoriesproduits) }}
-{% for categorieproduit in categoriesproduits %}
-    <li><a href="{{ path('app_categorieProduit' , {'id': categorieproduit.id, 'categorie_id' :  categorie.id }) }}">lien vers {{ categorieproduit.nom}} 
-    
-    
-    </a> </li>
-</ul> 
-{% endfor %}
+    {% for categorieproduit in categoriesproduits %}
+      <li><a href="{{ path('app_categorieProduit' , {'id': categorieproduit.id, 'categorie_id' :  categorie.id }) }}">lien vers {{ categorieproduit.nom}}</a> </li>
+    {% endfor %}
+  </ul>
   
   {% endblock %}
  
-<p> 
-    <image src = "{{ vich_uploader_asset(article, )}}

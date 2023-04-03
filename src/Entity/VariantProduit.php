@@ -19,8 +19,8 @@ class VariantProduit
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $couleur = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $prix = null;
+    #[ORM\Column]
+    private ?int $prix = null;
 
     #[ORM\ManyToOne(inversedBy: 'variantProduits')]
     #[ORM\JoinColumn(nullable: false)]
@@ -55,17 +55,17 @@ class VariantProduit
         return $this;
     }
 
-    public function getPrix(): ?string
+    public function getPrix(): ?int
     {
         return $this->prix;
     }
 
-    public function setPrix(string $prix): self
+    public function setPrix(?int $prix): VariantProduit
     {
         $this->prix = $prix;
-
         return $this;
     }
+
 
     public function getProduit(): ?Produit
     {
@@ -78,5 +78,9 @@ class VariantProduit
 
         return $this;
     }
-    
+
+    public function __toString() :string
+    {
+        return empty($this->couleur) ? ''.$this->taille : ''.$this->couleur;
+    }
 }

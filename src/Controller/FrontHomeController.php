@@ -24,22 +24,17 @@ class FrontHomeController extends AbstractController
         private VariantProduitRepository $variantProduitRepository,
         private MarqueRepository $marqueRepository
     )
-    {}
+    {
+
+    }
 
     #[Route('/', name: 'app_front')]
     public function index(Request $request): Response
     {
-        
-        $categories = $this->categorieRepository->findAll();
-        dump($categories);
-
-        $marques = $this->marqueRepository->findAll();
-        dump($marques);
-        
         $response = $this->render('front_home/index.html.twig', [
             'controller_name' => 'FrontHomeController',
-            'categories'      => $categories,
-            'marques'         => $marques
+            'categories'      => $this->categorieRepository->findAllWithProduct(),
+            'marques'         => $this->marqueRepository->findAllWithProduct()
         ]);
 
         return $response;
