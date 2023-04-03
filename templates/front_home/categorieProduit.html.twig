@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Hello CategorieProduit!
+{% endblock %}
+
+{% block body %}
+
+	<h1>{{ categorieproduit.nom }} pour {{ categorie.nom }} </h1>
+	<nav aria-label="breadcrumb">
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item"><a href="/">Home</a></li>
+			<li class="breadcrumb-item"><a href="{{ path('app_categorie', {'id':  categorie.id }) }}">{{ categorie.nom }}</a></li>
+			<li class="breadcrumb-item active" aria-current="page">{{ categorieproduit.nom }}</li>
+		</ol>
+	</nav>
+
+	<p>{{ categorieproduit.description }}</p>
+
+	{% if categorieproduit.image %}
+		<img src="{{ categorieproduit.image}}" alt="{{ categorieproduit.nom }}"/>
+	{% endif %}
+    <h2>Liste des liens vers les pages produits</h2>
+	{% include 'front_home/_productList.html.twig' with {'produits' : hrefsList} %}
+{% endblock %}
