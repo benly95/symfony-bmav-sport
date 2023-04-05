@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\VariantProduitRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: VariantProduitRepository::class)]
 class VariantProduit
@@ -14,12 +15,15 @@ class VariantProduit
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $taille = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $couleur = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
     private ?int $prix = null;
 
     #[ORM\ManyToOne(inversedBy: 'variantProduits')]

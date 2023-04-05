@@ -91,12 +91,12 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::section('Clients & commande');
-        yield MenuItem::linkToCrud('Clients', 'fa fa-tags', Client::class);
-        yield MenuItem::linkToCrud('Panier', 'fa fa-tags', Panier::class);
+        yield MenuItem::linkToCrud('Clients', 'fa-solid fa-users', Client::class);
+        yield MenuItem::linkToCrud('Commande', 'fa-solid fa-cart-shopping', Panier::class);
         yield MenuItem::section('Produit ');
-        yield MenuItem::LinkToCrud('Produit', 'fa fa-tags', Produit::class);
-        yield MenuItem::LinkToCrud('Marque', 'fa fa-tags', entityFqcn: Marque::class);
-        yield MenuItem::linkToCrud('Categorie', 'fa fa-tags', entityFqcn: Categorie::class);
+        yield MenuItem::LinkToCrud('Produit', 'fa-solid fa-box', Produit::class);
+        yield MenuItem::LinkToCrud('Marque', 'fa fa-copyright', entityFqcn: Marque::class);
+        yield MenuItem::linkToCrud('Categorie', 'fa-solid fa-mars-and-venus-burst', entityFqcn: Categorie::class);
         yield MenuItem::linkToCrud('Categorie Produit', 'fa fa-tags', entityFqcn: CategorieProduit::class);
 
 

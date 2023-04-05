@@ -6,6 +6,7 @@ use App\Repository\ProduitRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
 class Produit
@@ -16,13 +17,16 @@ class Produit
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank, Assert\Length(max: 255)]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'produits')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank]
     private ?Marque $Marque = null;
 
     #[ORM\ManyToOne(inversedBy: 'Produits')]
@@ -36,7 +40,8 @@ class Produit
     #[ORM\JoinColumn(nullable: true)]
     private ?CategorieProduit $categorieProduit = null;
 
-    #[ORM\OneToMany(mappedBy: 'Produit', targetEntity: VariantProduit::class)]
+    #[ORM\OneToMany(mappedBy: 'Produit', targetEntity: VariantProduit::class, cascade: ['persist', 'remove'])]
+    #[Assert\Valid, Assert\Count(min:1, minMessage: "Vous devez ajouter au moins une variante")]
     private Collection $variantProduits;
 
 
@@ -158,6 +163,9 @@ class Produit
 
     public function setImage(?string $image) :self
     {
+        if (!empty($this->image) && strpos($image, 'images/Produit/') === false) {
+            $image = 'images/Produit/'.$image;
+        }
         $this->image = $image;
 
         return $this;

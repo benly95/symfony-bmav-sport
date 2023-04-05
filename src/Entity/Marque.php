@@ -69,6 +69,9 @@ class Marque
 
     public function setImageLogo(string $imageLogo): self
     {
+        if (!empty($this->imageLogo) && strpos($imageLogo, 'images/Logo/') === false) {
+            $imageLogo = 'images/Produit/'.$imageLogo;
+        }
         $this->imageLogo = $imageLogo;
 
         return $this;
@@ -102,6 +105,11 @@ class Marque
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return ''.$this->nom;
     }
     
 }
