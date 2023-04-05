@@ -655,7 +655,7 @@ ALTER TABLE `produit`
 --
 ALTER TABLE `variant_produit`
   ADD CONSTRAINT `FK_4600C161F347EFB` FOREIGN KEY (`produit_id`) REFERENCES `produit` (`id`);
-COMMIT;
+
 
 SQL;
 
