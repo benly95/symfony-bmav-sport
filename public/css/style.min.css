@@ -1,1 +1,5 @@
 body{background-image:url(../images/avatar.png)}/*# sourceMappingURL=style.min.css.map */
+/* Pour les écrans plus petits que 600px de large */
+@media (max-width: 600px) {
+    /* Styles CSS pour ajuster la mise en page */
+}
